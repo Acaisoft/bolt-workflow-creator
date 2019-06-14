@@ -11,7 +11,7 @@ argoNamespace: argo
 
 image:
   repository: eu.gcr.io/acai-bolt/workflow-creator
-  tag: master-0f89bde45f
+  tag: latest
   pullPolicy: Always
 
 imagePullSecrets: []
@@ -48,8 +48,7 @@ resources: {}
   #   cpu: 100m
 #   memory: 128Mi
 
-nodeSelector:
-  group: default
+nodeSelector: {}
 
 tolerations: []
 
