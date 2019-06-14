@@ -16,4 +16,4 @@ ARG release
 ENV SENTRY_RELEASE $release
 
 EXPOSE 5000
-CMD gunicorn -b '0.0.0.0:5000' 'src.app:serve_app()'
+CMD gunicorn --log-level info -b '0.0.0.0:5000' 'src.app:serve_app()'

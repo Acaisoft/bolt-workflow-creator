@@ -30,6 +30,7 @@ class KubernetesService(KubernetesServiceABC):
             logger.error("Failed to load Kubernetes config in-cluster mode.")
             logger.info("Kubernetes config loaded in-cluster mode.")
         else:
+            logger.info("Kubernetes config loaded in-cluster.")
             return
 
         try:
