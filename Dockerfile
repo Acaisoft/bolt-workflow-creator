@@ -1,5 +1,6 @@
 FROM python:3.7-alpine
 
+ENV PYTHONBUFFERED=0
 RUN pip install -U pip && pip install pipenv
 
 WORKDIR /app
@@ -14,5 +15,5 @@ COPY src /app/src
 ARG release
 ENV SENTRY_RELEASE $release
 
-EXPOSE 500
+EXPOSE 5000
 CMD gunicorn -b '0.0.0.0:5000' 'src.app:serve_app()'
