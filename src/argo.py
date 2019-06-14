@@ -163,7 +163,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "container": {
                 "image": "docker/whalesay",
                 "command": ["cowsay"],
-                "args": ["post-stop"],
+                "args": ["{{workflow.outputs.parameters.image}}"],
             },
         }
         templates.append(template_post_stop)
