@@ -158,6 +158,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
     if workflow.job_pre_start is not None:
         template_pre_start = {
             "name": "pre-start",
+            "nodeSelector": {"group": "load-tests-workers-slave"},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "pre_start"],
@@ -174,6 +175,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
     if workflow.job_post_stop is not None:
         template_post_stop = {
             "name": "post-stop",
+            "nodeSelector": {"group": "load-tests-workers-slave"},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "post_stop"],
@@ -191,6 +193,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_monitoring = {
             "name": "monitoring",
             "daemon": workflow.job_load_tests is not None,
+            "nodeSelector": {"group": "load-tests-workers-slave"},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "monitoring"],
@@ -208,6 +211,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_load_tests_master = {
             "name": "load-tests-master",
             "daemon": True,
+            "nodeSelector": {"group": "load-tests-workers-master"},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
@@ -225,6 +229,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_load_tests_slave = {
             "name": "load-tests-slave",
             "inputs": {"parameters": [{"name": "master-ip"}]},
+            "nodeSelector": {"group": "load-tests-workers-slave"},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
