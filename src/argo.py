@@ -9,7 +9,7 @@ from typing import Optional
 from src.dao import Workflow
 
 # TODO: move to configuration file
-GRAPHQL_URL = "hasura.hasrua.svc.cluster.local/v1alpha1/graphql"
+GRAPHQL_URL = "http://hasura.hasrua.svc.cluster.local/v1alpha1/graphql"
 
 
 def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
