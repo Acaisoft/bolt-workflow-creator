@@ -69,6 +69,7 @@ def _generate_build_template(workflow: Workflow):
                     "name": "REDIS_URL",
                     "value": "redis://redis-master.redis.svc.cluster.local",
                 },
+                {"name": "NO_CACHE", "value": "0"},
             ],
         },
         "outputs": {
