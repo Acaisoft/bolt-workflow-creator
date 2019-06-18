@@ -68,7 +68,8 @@ def _generate_build_template(workflow: Workflow):
                 {"name": "PROJECT_ID", "value": workflow.project_id},
                 {
                     "name": "REDIS_URL",
-                    "value": "redis://redis-master.redis.svc.cluster.local",
+                    # TODO pass redis password the other way
+                    "value": "redis://:6a8ba845b1f74199be011e8bbdcdcec2@redis-master.redis.svc.cluster.local",
                 },
                 {"name": "NO_CACHE", "value": no_cache_value},
             ],
