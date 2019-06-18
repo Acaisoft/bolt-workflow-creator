@@ -25,17 +25,17 @@ def test_create_workflow_1(cli, kubernetes_service):
     data = {
         "tenant_id": "world-corp",
         "project_id": "test-project",
+        "repository_url": "git@exmaple.git/repo/123",
         "execution_id": "execution-identifier",
         "auth_token": "some_token",
         "duration_seconds": 123,
-        "job_pre_start": {},
-        "job_post_stop": {},
-        "job_monitoring": {},
-        "job_load_tests": None,
+        "job_pre_start": {"env_vars": {"foo": "bar"}},
+        "job_post_stop": {"env_vars": {"foo": "bar"}},
+        "job_monitoring": {"env_vars": {"foo": "bar"}},
+        "job_load_tests": {"env_vars": {"foo": "bar"}, "workers": 5},
     }
 
     response: Result = cli.simulate_post("/workflows", body=json.dumps(data).encode())
 
     kubernetes_service.create_argo_workflow.assert_called_once()
-    print(f">>>\n{response.content.decode()}")
-    assert response.status == falcon.HTTP_OK
+    assert response.status == falcon.HTTP_ACCEPTED
