@@ -29,6 +29,8 @@ class Workflow:
     tenant_id: str
     project_id: str
 
+    repository_url: str
+
     execution_id: str
     auth_token: str
 

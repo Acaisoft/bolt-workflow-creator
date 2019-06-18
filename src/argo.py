@@ -4,8 +4,12 @@ from string import digits
 from typing import Any
 from typing import Dict
 from typing import List
+from typing import Optional
 
 from src.dao import Workflow
+
+# TODO: move to configuration file
+GRAPHQL_URL = "hasura.hasrua.svc.cluster.local/v1alpha1/graphql"
 
 
 def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
@@ -53,6 +57,7 @@ def _generate_build_template(workflow: Workflow):
                 {"mountPath": "/etc/kaniko", "name": "kaniko-secret"},
             ],
             "env": [
+                {"name": "REPOSITORY_URL", "value": workflow.repository_url},
                 {
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
                     "value": "/etc/kaniko/kaniko-secret.json",
@@ -60,10 +65,6 @@ def _generate_build_template(workflow: Workflow):
                 {"name": "CLOUDSDK_CORE_PROJECT", "value": "acai-bolt"},
                 {"name": "TENANT_ID", "value": workflow.tenant_id},
                 {"name": "PROJECT_ID", "value": workflow.project_id},
-                {
-                    "name": "REPOSITORY_URL",
-                    "value": "git@bitbucket.org:acaisoft/load-events.git",
-                },
                 {
                     "name": "REDIS_URL",
                     "value": "redis://redis-master.redis.svc.cluster.local",
@@ -117,6 +118,14 @@ def _generate_execution_template(workflow: Workflow):
                     "name": f"load-tests-slave-{i + 1:03}",
                     "template": "load-tests-slave",
                     "dependencies": ["load-tests-master"],
+                    "arguments": {
+                        "parameters": [
+                            {
+                                "name": "master-ip",
+                                "value": "{{tasks.load-tests-master.ip}}",
+                            }
+                        ]
+                    },
                 }
             )
 
@@ -150,9 +159,14 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_pre_start = {
             "name": "pre-start",
             "container": {
-                "image": "docker/whalesay",
-                "command": ["cowsay"],
-                "args": ["pre-start"],
+                "image": "{{workflow.outputs.parameters.image}}",
+                "command": ["python", "-m", "bolt_run", "pre_start"],
+                "env": [
+                    *_map_envs(workflow.job_pre_start.env_vars),
+                    {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
+                    {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
+                    {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
+                ],
             },
         }
         templates.append(template_pre_start)
@@ -161,9 +175,14 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_post_stop = {
             "name": "post-stop",
             "container": {
-                "image": "docker/whalesay",
-                "command": ["cowsay"],
-                "args": ["{{workflow.outputs.parameters.image}}"],
+                "image": "{{workflow.outputs.parameters.image}}",
+                "command": ["python", "-m", "bolt_run", "post_stop"],
+                "env": [
+                    *_map_envs(workflow.job_post_stop.env_vars),
+                    {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
+                    {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
+                    {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
+                ],
             },
         }
         templates.append(template_post_stop)
@@ -172,7 +191,16 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_monitoring = {
             "name": "monitoring",
             "daemon": workflow.job_load_tests is not None,
-            "container": {"image": "jroslaniec/tapp"},
+            "container": {
+                "image": "{{workflow.outputs.parameters.image}}",
+                "command": ["python", "-m", "bolt_run", "monitoring"],
+                "env": [
+                    *_map_envs(workflow.job_monitoring.env_vars),
+                    {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
+                    {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
+                    {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
+                ],
+            },
         }
         templates.append(template_monitoring)
 
@@ -180,16 +208,37 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_load_tests_master = {
             "name": "load-tests-master",
             "daemon": True,
-            "container": {"image": "jroslaniec/tapp"},
+            "container": {
+                "image": "{{workflow.outputs.parameters.image}}",
+                "command": ["python", "-m", "bolt_run", "load_tests"],
+                "env": [
+                    *_map_envs(workflow.job_load_tests.env_vars),
+                    {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
+                    {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
+                    {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
+                    {"name": "BOLT_WORKER_TYPE", "value": "master"},
+                ],
+            },
         }
         templates.append(template_load_tests_master)
 
         template_load_tests_slave = {
             "name": "load-tests-slave",
+            "inputs": {"parameters": [{"name": "master-ip"}]},
             "container": {
-                "image": "docker/whalesay",
-                "command": ["cowsay"],
-                "args": ["load-tests-slave"],
+                "image": "{{workflow.outputs.parameters.image}}",
+                "command": ["python", "-m", "bolt_run", "load_tests"],
+                "env": [
+                    *_map_envs(workflow.job_load_tests.env_vars),
+                    {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
+                    {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
+                    {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
+                    {"name": "BOLT_WORKER_TYPE", "value": "slave"},
+                    {
+                        "name": "BOLT_MASTER_HOST",
+                        "value": "{{inputs.parameters.master-ip}}",
+                    },
+                ],
             },
         }
         templates.append(template_load_tests_slave)
@@ -206,3 +255,14 @@ def _generate_volumes(workflow: Workflow):
 
 def _postfix_generator(num=6):
     return "".join(choice(ascii_lowercase + digits) for _ in range(num))
+
+
+def _map_envs(env_vars: Optional[Dict[str, str]]) -> List[Dict]:
+    if env_vars is None:
+        return []
+
+    output = []
+    for key, value in env_vars.items():
+        output.append({"name": key, "value": value})
+
+    return output

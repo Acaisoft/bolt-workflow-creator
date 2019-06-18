@@ -33,6 +33,8 @@ class WorkflowSchema(Schema):
     execution_id = fields.Str(required=True)
     auth_token = fields.Str(required=True)
 
+    repository_url = fields.Str(required=True)
+
     duration_seconds = fields.Integer(required=True)
 
     job_pre_start = fields.Nested(PreStartSchema, missing=None)
