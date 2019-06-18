@@ -42,6 +42,8 @@ class WorkflowSchema(Schema):
     job_monitoring = fields.Nested(MonitoringSchema, missing=None)
     job_load_tests = fields.Nested(LoadTestsSchema, missing=None)
 
+    no_cache = fields.Boolean(required=False, missing=False)
+
     @post_load
     def make_workflow(self, data):
         data["job_pre_start"] = (

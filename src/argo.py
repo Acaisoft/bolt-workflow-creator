@@ -46,6 +46,7 @@ def _generate_templates(workflow: Workflow):
 
 
 def _generate_build_template(workflow: Workflow):
+    no_cache_value = "1" if workflow.no_cache else "0"
     return {
         "name": "build",
         "container": {
@@ -69,7 +70,7 @@ def _generate_build_template(workflow: Workflow):
                     "name": "REDIS_URL",
                     "value": "redis://redis-master.redis.svc.cluster.local",
                 },
-                {"name": "NO_CACHE", "value": "0"},
+                {"name": "NO_CACHE", "value": no_cache_value},
             ],
         },
         "outputs": {

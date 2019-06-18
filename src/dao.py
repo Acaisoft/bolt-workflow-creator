@@ -40,3 +40,5 @@ class Workflow:
     job_post_stop: Optional[JobPostStop]
     job_monitoring: Optional[JobMonitoring]
     job_load_tests: Optional[JobLoadTests]
+
+    no_cache: bool

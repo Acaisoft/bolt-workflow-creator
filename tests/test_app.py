@@ -33,6 +33,7 @@ def test_create_workflow_1(cli, kubernetes_service):
         "job_post_stop": {"env_vars": {"foo": "bar"}},
         "job_monitoring": {"env_vars": {"foo": "bar"}},
         "job_load_tests": {"env_vars": {"foo": "bar"}, "workers": 5},
+        "no_cache": True,
     }
 
     response: Result = cli.simulate_post("/workflows", body=json.dumps(data).encode())
