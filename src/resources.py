@@ -24,6 +24,7 @@ class WorkflowsResource:
         workflow = result.data
         argo_workflow = create_argo_workflow(workflow)
 
-        self.kubernetes_service.create_argo_workflow(argo_workflow)
+        output = self.kubernetes_service.create_argo_workflow(argo_workflow)
 
-        response.status = falcon.HTTP_202
+        response.media = output["metadata"]
+        response.status = falcon.HTTP_OK

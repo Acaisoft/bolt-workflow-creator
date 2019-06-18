@@ -38,4 +38,4 @@ def test_create_workflow_1(cli, kubernetes_service):
     response: Result = cli.simulate_post("/workflows", body=json.dumps(data).encode())
 
     kubernetes_service.create_argo_workflow.assert_called_once()
-    assert response.status == falcon.HTTP_ACCEPTED
+    assert response.status == falcon.HTTP_OK
