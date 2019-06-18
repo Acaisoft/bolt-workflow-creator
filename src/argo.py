@@ -168,6 +168,10 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
                 ],
+                "resources": {
+                    "limits": {"cpu": "110m", "memory": "220Mi"},
+                    "requests": {"cpu": "100m", "memory": "200Mi"},
+                },
             },
         }
         templates.append(template_pre_start)
@@ -185,6 +189,10 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
                 ],
+                "resources": {
+                    "limits": {"cpu": "110m", "memory": "220Mi"},
+                    "requests": {"cpu": "100m", "memory": "200Mi"},
+                },
             },
         }
         templates.append(template_post_stop)
@@ -203,6 +211,10 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
                 ],
+                "resources": {
+                    "limits": {"cpu": "110m", "memory": "220Mi"},
+                    "requests": {"cpu": "100m", "memory": "200Mi"},
+                },
             },
         }
         templates.append(template_monitoring)
@@ -222,6 +234,10 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
                     {"name": "BOLT_WORKER_TYPE", "value": "master"},
                 ],
+                "resources": {
+                    "limits": {"cpu": "110m", "memory": "220Mi"},
+                    "requests": {"cpu": "100m", "memory": "200Mi"},
+                },
             },
         }
         templates.append(template_load_tests_master)
@@ -244,6 +260,10 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                         "value": "{{inputs.parameters.master-ip}}",
                     },
                 ],
+                "resources": {
+                    "limits": {"cpu": "440m", "memory": "550Mi"},
+                    "requests": {"cpu": "400m", "memory": "500Mi"},
+                },
             },
         }
         templates.append(template_load_tests_slave)
