@@ -183,6 +183,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_post_stop = {
             "name": "post-stop",
             "nodeSelector": {"group": "load-tests-workers-slave"},
+            "metadata": {"labels": {"prevent-bolt-termination": "true"}},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "post_stop"],
