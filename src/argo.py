@@ -72,6 +72,9 @@ def _generate_build_template(workflow: Workflow):
                     "value": "redis://:6a8ba845b1f74199be011e8bbdcdcec2@redis-master.redis.svc.cluster.local",
                 },
                 {"name": "NO_CACHE", "value": no_cache_value},
+                {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
+                {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
+                {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
             ],
         },
         "outputs": {
