@@ -224,6 +224,8 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                 },
             },
         }
+        if not workflow.job_load_tests:
+            template_monitoring['retryStrategy'] = {'limit': 10}
         templates.append(template_monitoring)
 
     if workflow.job_load_tests is not None:
