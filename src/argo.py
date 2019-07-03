@@ -207,6 +207,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
     if workflow.job_monitoring is not None:
         template_monitoring = {
             "name": "monitoring",
+            "daemon": workflow.job_load_tests is not None,
             "nodeSelector": {"group": "load-tests-workers-slave"},
             "retryStrategy": {"limit": 5},
             "container": {
