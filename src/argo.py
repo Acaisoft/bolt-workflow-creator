@@ -209,6 +209,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "monitoring",
             "daemon": workflow.job_load_tests is not None,
             "nodeSelector": {"group": "load-tests-workers-slave"},
+            "retryStrategy": {"limit": 5},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "monitoring"],
@@ -224,8 +225,6 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                 },
             },
         }
-        if not workflow.job_load_tests:
-            template_monitoring['retryStrategy'] = {'limit': 10}
         templates.append(template_monitoring)
 
     if workflow.job_load_tests is not None:
@@ -255,6 +254,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "load-tests-slave",
             "inputs": {"parameters": [{"name": "master-ip"}]},
             "nodeSelector": {"group": "load-tests-workers-slave"},
+            "retryStrategy": {"limit": 5},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
