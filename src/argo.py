@@ -140,13 +140,6 @@ def _generate_execution_template(workflow: Workflow):
         if workflow.job_pre_start is not None:
             monitor_dependencies.append("pre-start")
 
-        # When we run monitoring with load tests
-        # then monitoring is ran in daemon mode
-        # load-tests master's ip will be passed to
-        # monitoring so they can coordinate themselves
-        if workflow.job_load_tests is not None:
-            monitor_dependencies.append("load-tests-master")
-
         tasks.append(
             {
                 "name": "monitoring",
@@ -207,7 +200,6 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
     if workflow.job_monitoring is not None:
         template_monitoring = {
             "name": "monitoring",
-            "daemon": workflow.job_load_tests is not None,
             "nodeSelector": {"group": "load-tests-workers-slave"},
             "retryStrategy": {"limit": 5},
             "container": {
