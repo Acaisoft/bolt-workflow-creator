@@ -158,6 +158,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_pre_start = {
             "name": "pre-start",
             "nodeSelector": {"group": "load-tests-workers-slave"},
+            "activeDeadlineSeconds": 600,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "pre_start"],
@@ -180,6 +181,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "post-stop",
             "nodeSelector": {"group": "load-tests-workers-slave"},
             "metadata": {"labels": {"prevent-bolt-termination": "true"}},
+            "activeDeadlineSeconds": 600,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "post_stop"],
@@ -224,6 +226,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "load-tests-master",
             "daemon": True,
             "nodeSelector": {"group": "load-tests-workers-master"},
+            "activeDeadlineSeconds": 4800,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
