@@ -203,7 +203,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
         template_monitoring = {
             "name": "monitoring",
             "nodeSelector": {"group": "load-tests-workers-slave"},
-            "retryStrategy": {"limit": 5},
+            "retryStrategy": {"limit": 10},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "monitoring"],
@@ -249,7 +249,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "load-tests-slave",
             "inputs": {"parameters": [{"name": "master-ip"}]},
             "nodeSelector": {"group": "load-tests-workers-slave"},
-            "retryStrategy": {"limit": 5},
+            "retryStrategy": {"limit": 7},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
