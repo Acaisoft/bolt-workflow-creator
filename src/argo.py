@@ -41,7 +41,6 @@ def _generate_templates(workflow: Workflow):
     build_template = _generate_build_template(workflow)
     execution_template = _generate_execution_template(workflow)
     steps_templates = _generate_steps_templates(workflow)
-
     return [main_template, execution_template, build_template, *steps_templates]
 
 
@@ -238,8 +237,8 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_WORKER_TYPE", "value": "master"},
                 ],
                 "resources": {
-                    "limits": {"cpu": "110m", "memory": "220Mi"},
-                    "requests": {"cpu": "100m", "memory": "200Mi"},
+                    "limits": {"cpu": "220m", "memory": "440Mi"},
+                    "requests": {"cpu": "200m", "memory": "400Mi"},
                 },
             },
         }
