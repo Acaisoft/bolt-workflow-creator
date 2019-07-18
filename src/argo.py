@@ -237,8 +237,8 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_WORKER_TYPE", "value": "master"},
                 ],
                 "resources": {
-                    "limits": {"cpu": "110m", "memory": "220Mi"},
-                    "requests": {"cpu": "100m", "memory": "200Mi"},
+                    "limits": {"cpu": "210m", "memory": "320Mi"},
+                    "requests": {"cpu": "200m", "memory": "300Mi"},
                 },
             },
         }
@@ -248,7 +248,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "load-tests-slave",
             "inputs": {"parameters": [{"name": "master-ip"}]},
             "nodeSelector": {"group": "load-tests-workers-slave"},
-            "retryStrategy": {"limit": 7},
+            "retryStrategy": {"limit": 3},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
@@ -264,8 +264,8 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     },
                 ],
                 "resources": {
-                    "limits": {"cpu": "440m", "memory": "550Mi"},
-                    "requests": {"cpu": "400m", "memory": "500Mi"},
+                    "limits": {"cpu": "640m", "memory": "750Mi"},
+                    "requests": {"cpu": "600m", "memory": "700Mi"},
                 },
             },
         }
