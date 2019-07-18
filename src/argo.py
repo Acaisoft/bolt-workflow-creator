@@ -237,8 +237,8 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_WORKER_TYPE", "value": "master"},
                 ],
                 "resources": {
-                    "limits": {"cpu": "220m", "memory": "440Mi"},
-                    "requests": {"cpu": "200m", "memory": "400Mi"},
+                    "limits": {"cpu": "110m", "memory": "220Mi"},
+                    "requests": {"cpu": "100m", "memory": "200Mi"},
                 },
             },
         }
