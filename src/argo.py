@@ -160,7 +160,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "activeDeadlineSeconds": 600,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
-                "command": ["python", "-m", "bolt_run", "pre_start"],
+                "command": ["python3", "-m", "bolt_run", "pre_start"],
                 "env": [
                     *_map_envs(workflow.job_pre_start.env_vars),
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
@@ -183,7 +183,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "activeDeadlineSeconds": 600,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
-                "command": ["python", "-m", "bolt_run", "post_stop"],
+                "command": ["python3", "-m", "bolt_run", "post_stop"],
                 "env": [
                     *_map_envs(workflow.job_post_stop.env_vars),
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
@@ -205,7 +205,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "retryStrategy": {"limit": 10},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
-                "command": ["python", "-m", "bolt_run", "monitoring"],
+                "command": ["python3", "-m", "bolt_run", "monitoring"],
                 "env": [
                     *_map_envs(workflow.job_monitoring.env_vars),
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
@@ -228,7 +228,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "activeDeadlineSeconds": 4800,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
-                "command": ["python", "-m", "bolt_run", "load_tests"],
+                "command": ["python3", "-m", "bolt_run", "load_tests"],
                 "env": [
                     *_map_envs(workflow.job_load_tests.env_vars),
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
@@ -251,7 +251,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "retryStrategy": {"limit": 10},
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
-                "command": ["python", "-m", "bolt_run", "load_tests"],
+                "command": ["python3", "-m", "bolt_run", "load_tests"],
                 "env": [
                     *_map_envs(workflow.job_load_tests.env_vars),
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
