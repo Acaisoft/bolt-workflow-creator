@@ -23,6 +23,7 @@ class MonitoringSchema(Schema):
 
 class LoadTestsSchema(Schema):
     env_vars = fields.Dict()
+    users = fields.Integer()
     workers = fields.Integer()
 
 
