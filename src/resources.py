@@ -1,8 +1,13 @@
+import logging
+
 import falcon
 
 from src.argo import create_argo_workflow
 from src.schemas import WorkflowSchema
 from src.services import KubernetesServiceABC
+
+
+logger = logging.getLogger()
 
 
 class HealthCheckResource:
@@ -15,6 +20,7 @@ class WorkflowsResource:
         self.kubernetes_service = kubernetes_service
 
     def on_post(self, request: falcon.Request, response: falcon.Response):
+        logger.info("TEST")
         schema = WorkflowSchema()
         result = schema.load(request.media)
 
