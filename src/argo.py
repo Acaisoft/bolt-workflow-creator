@@ -263,6 +263,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                         "name": "BOLT_MASTER_HOST",
                         "value": "{{inputs.parameters.master-ip}}",
                     },
+                    {"name": "BOLT_USERS", "value": 100},
                 ],
                 "resources": {
                     "limits": {"cpu": "840m", "memory": "950Mi"},
