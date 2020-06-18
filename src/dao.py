@@ -30,6 +30,7 @@ class Workflow:
     project_id: str
 
     repository_url: str
+    branch: str
 
     execution_id: str
     auth_token: str

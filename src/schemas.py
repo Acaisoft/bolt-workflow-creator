@@ -34,6 +34,7 @@ class WorkflowSchema(Schema):
     auth_token = fields.Str(required=True)
 
     repository_url = fields.Str(required=True)
+    branch = fields.Str(missing="master")
 
     duration_seconds = fields.Integer(required=True)
 

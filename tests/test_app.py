@@ -26,6 +26,7 @@ def test_create_workflow_1(cli, kubernetes_service):
         "tenant_id": "world-corp",
         "project_id": "test-project",
         "repository_url": "git@exmaple.git/repo/123",
+        "branch": "master",
         "execution_id": "execution-identifier",
         "auth_token": "some_token",
         "duration_seconds": 123,
