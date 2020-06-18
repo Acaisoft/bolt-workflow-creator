@@ -74,6 +74,7 @@ def _generate_build_template(workflow: Workflow):
                 {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
                 {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                 {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
+                {"name": "BRANCH", "value": "master"},
             ],
         },
         "outputs": {
