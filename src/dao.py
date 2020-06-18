@@ -21,7 +21,6 @@ class JobMonitoring:
 @dataclass
 class JobLoadTests:
     workers: int
-    users: int
     env_vars: Optional[Dict[str, str]] = None
 
 
