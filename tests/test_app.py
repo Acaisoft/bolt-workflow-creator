@@ -33,7 +33,7 @@ def test_create_workflow_1(cli, kubernetes_service):
         "job_pre_start": {"env_vars": {"foo": "bar"}},
         "job_post_stop": {"env_vars": {"foo": "bar"}},
         "job_monitoring": {"env_vars": {"foo": "bar"}},
-        "job_load_tests": {"env_vars": {"foo": "bar"}, "workers": 5},
+        "job_load_tests": {"env_vars": {"foo": "bar"}, "workers": 5, "users": 10},
         "no_cache": True,
     }
 
