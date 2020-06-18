@@ -232,7 +232,6 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                 "command": ["python", "-m", "bolt_run", "load_tests"],
                 "env": [
                     *_map_envs(workflow.job_load_tests.env_vars),
-                    {"name": "LOCUST_USERS", "value": 100},
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
                     {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
@@ -256,7 +255,6 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                 "command": ["python", "-m", "bolt_run", "load_tests"],
                 "env": [
                     *_map_envs(workflow.job_load_tests.env_vars),
-                    {"name": "LOCUST_USERS", "value": 100},
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
                     {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
