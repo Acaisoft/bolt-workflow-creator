@@ -25,6 +25,8 @@ class LoadTestsSchema(Schema):
     env_vars = fields.Dict()
     users = fields.Integer()
     workers = fields.Integer()
+    host = fields.String(allow_none=True)
+    port = fields.Integer(allow_none=True)
 
 
 class WorkflowSchema(Schema):
