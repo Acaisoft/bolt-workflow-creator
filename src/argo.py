@@ -167,7 +167,6 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                     {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
                     {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
                     {"name": "BOLT_HASURA_TOKEN", "value": workflow.auth_token},
-                    {"name": "BOLT_USERS", "value": str(workflow.job_load_tests.users)},
                 ],
                 "resources": {
                     "limits": {"cpu": "110m", "memory": "220Mi"},
@@ -264,7 +263,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                         "name": "BOLT_MASTER_HOST",
                         "value": "{{inputs.parameters.master-ip}}",
                     },
-                    {"name": "BOLT_USERS", "value": str(workflow.job_load_tests.users)},
+                    {"name": "BOLT_USERS", "value": str(workflow.job_load_tests.users)}
                 ],
                 "resources": {
                     "limits": {"cpu": "840m", "memory": "950Mi"},
@@ -272,14 +271,6 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
                 },
             },
         }
-        if workflow.job_load_tests.host is not None:
-            template_load_tests_slave["container"]["env"].append(
-                {"name": "BOLT_HOST", "value": workflow.job_load_tests.host}
-            )
-        if workflow.job_load_tests.port is not None:
-            template_load_tests_slave["container"]["env"].append(
-                {"name": "BOLT_PORT", "value": str(workflow.job_load_tests.port)}
-            )
         templates.append(template_load_tests_slave)
 
     return templates
