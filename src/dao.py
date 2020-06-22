@@ -23,6 +23,8 @@ class JobLoadTests:
     workers: int
     users: int
     env_vars: Optional[Dict[str, str]] = None
+    host: Optional[str] = None
+    port: Optional[int] = None
 
 
 @dataclass
