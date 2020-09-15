@@ -227,7 +227,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
             "name": "load-tests-master",
             "daemon": True,
             "nodeSelector": {"group": "load-tests-workers-master"},
-            "activeDeadlineSeconds": 4800,
+            "activeDeadlineSeconds": 30000,
             "container": {
                 "image": "{{workflow.outputs.parameters.image}}",
                 "command": ["python", "-m", "bolt_run", "load_tests"],
