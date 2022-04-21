@@ -1,14 +1,15 @@
 FROM python:3.7-alpine
 
 ENV PYTHONBUFFERED=0
-RUN pip install -U pip && pip install pipenv
+RUN pip install --upgrade pip==20.2.3 && pip install pipenv
 
 WORKDIR /app
 
 COPY Pipfile Pipfile
 COPY Pipfile.lock Pipfile.lock
+COPY requirements.lock requirements.lock
 
-RUN pipenv install --system
+RUN pip install -r requirements.lock
 
 COPY src /app/src
 
