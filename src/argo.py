@@ -51,7 +51,7 @@ def _generate_build_template(workflow: Workflow):
         "container": {
             # TODO we should used tagged image, but for now pull always...
             "imagePullPolicy": "Always",
-            "image": "eu.gcr.io/acai-bolt/bolt-builder:revival-v2",
+            "image": "eu.gcr.io/acai-bolt/argo-builder:revival-v2",
             "volumeMounts": [
                 {"mountPath": "/root/.ssh", "name": "ssh"},
                 {"mountPath": "/etc/kaniko", "name": "kaniko-secret"},
