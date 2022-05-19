@@ -6,21 +6,26 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+from src import custom_logger
 from src.dao import Workflow
 
 # TODO: move to configuration file
 GRAPHQL_URL = "http://hasura.hasura.svc.cluster.local/v1alpha1/graphql"
+logger = custom_logger.setup_custom_logger(__file__)
 
 
 def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
     """
     Returns argoproj.io/v1alpha1 Workflow as dict (in json format)
     """
+    pod_name = f"bolt-wf-{_postfix_generator()}"
+    logger.info(f"Pod name: {pod_name}")
+
     resource_definition = {
         "apiVersion": "argoproj.io/v1alpha1",
         "kind": "Workflow",
         "metadata": {
-            "name": f"bolt-wf-{_postfix_generator()}",
+            "name": pod_name,
             # TODO specify namespace via some external config
             "namespace": "argo",
         },
@@ -38,9 +43,13 @@ def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
 
 def _generate_templates(workflow: Workflow):
     main_template = _generate_main_template(workflow)
+    logger.info(f"The main template has been created.")
     build_template = _generate_build_template(workflow)
+    logger.info(f"The bolt-builder template has been created.")
     execution_template = _generate_execution_template(workflow)
+    logger.info(f"The execution template has been created.")
     steps_templates = _generate_steps_templates(workflow)
+    logger.info(f"The execution steps templates have been created.")
     return [main_template, execution_template, build_template, *steps_templates]
 
 
