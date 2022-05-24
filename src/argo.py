@@ -60,26 +60,21 @@ def _generate_build_template(workflow: Workflow):
         "container": {
             # TODO we should used tagged image, but for now pull always...
             "imagePullPolicy": "Always",
-            "image": "eu.gcr.io/acai-bolt/argo-builder:revival-v3",
+            "image": "eu.gcr.io/acai-bolt/argo-builder:revival-v4",
             "volumeMounts": [
                 {"mountPath": "/root/.ssh", "name": "ssh"},
-                {"mountPath": "/etc/kaniko", "name": "kaniko-secret"},
+                {"mountPath": "/etc/google", "name": "google-secret"},
             ],
             "env": [
                 {"name": "REPOSITORY_URL", "value": workflow.repository_url},
                 {"name": "BRANCH", "value": workflow.branch},
                 {
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
-                    "value": "/etc/kaniko/kaniko-secret.json",
+                    "value": "/etc/google/google-secret.json",
                 },
                 {"name": "CLOUDSDK_CORE_PROJECT", "value": "acai-bolt"},
                 {"name": "TENANT_ID", "value": workflow.tenant_id},
                 {"name": "PROJECT_ID", "value": workflow.project_id},
-                {
-                    "name": "REDIS_URL",
-                    # TODO pass redis password the other way
-                    "value": "redis://:6a8ba845b1f74199be011e8bbdcdcec2@redis-master.redis.svc.cluster.local",
-                },
                 {"name": "NO_CACHE", "value": no_cache_value},
                 {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
                 {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
