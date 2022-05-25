@@ -34,6 +34,24 @@ def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
             "templates": _generate_templates(workflow),
             "volumes": _generate_volumes(workflow),
             "serviceAccountName": "argo",
+            "affinity": {
+                "nodeAffinity": {
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                        "nodeSelectorTerms": {
+                            "matchExpressions": [
+                                {
+                                    "key": "nodel_pool",
+                                    "operator": "In",
+                                    "values": [
+                                        "load-tests-workers-slaves",
+                                        "load-tests-workers-masters",
+                                    ],
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         },
     }
     if workflow.job_post_stop:
