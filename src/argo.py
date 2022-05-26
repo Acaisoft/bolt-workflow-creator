@@ -310,7 +310,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
 def _generate_volumes(workflow: Workflow):
     return [
         {"name": "ssh", "secret": {"defaultMode": 384, "secretName": "ssh-files"}},
-        {"name": "kaniko-secret", "secret": {"secretName": "kaniko-secret"}},
+        {"name": "google-secret", "secret": {"secretName": "google-secret"}},
     ]
 
 
