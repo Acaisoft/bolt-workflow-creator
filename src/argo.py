@@ -37,18 +37,20 @@ def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
             "affinity": {
                 "nodeAffinity": {
                     "requiredDuringSchedulingIgnoredDuringExecution": {
-                        "nodeSelectorTerms": {
-                            "matchExpressions": [
-                                {
-                                    "key": "nodel_pool",
-                                    "operator": "In",
-                                    "values": [
-                                        "load-tests-workers-slaves",
-                                        "load-tests-workers-masters",
-                                    ],
-                                }
-                            ]
-                        }
+                        "nodeSelectorTerms": [
+                            {
+                                "matchExpressions": [
+                                    {
+                                        "key": "node_pool",
+                                        "operator": "In",
+                                        "values": [
+                                            "load-tests-workers-slaves",
+                                            "load-tests-workers-masters",
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 }
             }
