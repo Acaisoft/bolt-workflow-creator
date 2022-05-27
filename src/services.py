@@ -1,5 +1,4 @@
 import abc
-import logging
 from typing import Any
 from typing import Dict
 
@@ -7,7 +6,9 @@ from kubernetes import client
 from kubernetes import config
 from kubernetes.config import ConfigException
 
-logger = logging.getLogger()
+from src import custom_logger
+
+logger = custom_logger.setup_custom_logger(__file__)
 
 
 class KubernetesServiceABC(abc.ABC):

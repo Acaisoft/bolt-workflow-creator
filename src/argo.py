@@ -6,21 +6,26 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
+from src import custom_logger
 from src.dao import Workflow
 
 # TODO: move to configuration file
 GRAPHQL_URL = "http://hasura.hasura.svc.cluster.local/v1alpha1/graphql"
+logger = custom_logger.setup_custom_logger(__file__)
 
 
 def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
     """
     Returns argoproj.io/v1alpha1 Workflow as dict (in json format)
     """
+    pod_name = f"bolt-wf-{_postfix_generator()}"
+    logger.info(f"Pod name: {pod_name}")
+
     resource_definition = {
         "apiVersion": "argoproj.io/v1alpha1",
         "kind": "Workflow",
         "metadata": {
-            "name": f"bolt-wf-{_postfix_generator()}",
+            "name": pod_name,
             # TODO specify namespace via some external config
             "namespace": "argo",
         },
@@ -29,6 +34,26 @@ def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
             "templates": _generate_templates(workflow),
             "volumes": _generate_volumes(workflow),
             "serviceAccountName": "argo",
+            "affinity": {
+                "nodeAffinity": {
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                        "nodeSelectorTerms": [
+                            {
+                                "matchExpressions": [
+                                    {
+                                        "key": "node_pool",
+                                        "operator": "In",
+                                        "values": [
+                                            "load-tests-workers-slaves",
+                                            "load-tests-workers-masters",
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
         },
     }
     if workflow.job_post_stop:
@@ -38,9 +63,13 @@ def create_argo_workflow(workflow: Workflow) -> Dict[str, Any]:
 
 def _generate_templates(workflow: Workflow):
     main_template = _generate_main_template(workflow)
+    logger.info(f"The main template has been created.")
     build_template = _generate_build_template(workflow)
+    logger.info(f"The bolt-builder template has been created.")
     execution_template = _generate_execution_template(workflow)
+    logger.info(f"The execution template has been created.")
     steps_templates = _generate_steps_templates(workflow)
+    logger.info(f"The execution steps templates have been created.")
     return [main_template, execution_template, build_template, *steps_templates]
 
 
@@ -51,26 +80,21 @@ def _generate_build_template(workflow: Workflow):
         "container": {
             # TODO we should used tagged image, but for now pull always...
             "imagePullPolicy": "Always",
-            "image": "eu.gcr.io/acai-bolt/argo-builder",
+            "image": "eu.gcr.io/acai-bolt/argo-builder:revival-v4",
             "volumeMounts": [
                 {"mountPath": "/root/.ssh", "name": "ssh"},
-                {"mountPath": "/etc/kaniko", "name": "kaniko-secret"},
+                {"mountPath": "/etc/google", "name": "google-secret"},
             ],
             "env": [
                 {"name": "REPOSITORY_URL", "value": workflow.repository_url},
                 {"name": "BRANCH", "value": workflow.branch},
                 {
                     "name": "GOOGLE_APPLICATION_CREDENTIALS",
-                    "value": "/etc/kaniko/kaniko-secret.json",
+                    "value": "/etc/google/google-secret.json",
                 },
                 {"name": "CLOUDSDK_CORE_PROJECT", "value": "acai-bolt"},
                 {"name": "TENANT_ID", "value": workflow.tenant_id},
                 {"name": "PROJECT_ID", "value": workflow.project_id},
-                {
-                    "name": "REDIS_URL",
-                    # TODO pass redis password the other way
-                    "value": "redis://:6a8ba845b1f74199be011e8bbdcdcec2@redis-master.redis.svc.cluster.local",
-                },
                 {"name": "NO_CACHE", "value": no_cache_value},
                 {"name": "BOLT_EXECUTION_ID", "value": workflow.execution_id},
                 {"name": "BOLT_GRAPHQL_URL", "value": GRAPHQL_URL},
@@ -288,7 +312,7 @@ def _generate_steps_templates(workflow) -> List[Dict[str, Any]]:
 def _generate_volumes(workflow: Workflow):
     return [
         {"name": "ssh", "secret": {"defaultMode": 384, "secretName": "ssh-files"}},
-        {"name": "kaniko-secret", "secret": {"secretName": "kaniko-secret"}},
+        {"name": "google-secret", "secret": {"secretName": "google-secret"}},
     ]
 
 
